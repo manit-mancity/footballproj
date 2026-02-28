@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinnacle Football Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-bg: #161b22;
+            --accent-color: #38bdf8;
+            --text-main: #f0f6fc;
+            --text-dim: #8b949e;
+            --border: #30363d;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Sidebar/Navbar */
+        nav {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(22, 27, 34, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span { color: var(--accent-color); }
+
+        /* Main Layout */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            margin-bottom: 2rem;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .section-card:hover {
+            border-color: var(--accent-color);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.1rem;
+            margin: 0;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Empty State Styling */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            color: var(--text-dim);
+        }
+
+        .btn-add {
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-add:hover { opacity: 0.9; }
+
+        /* Quick Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: linear-gradient(145deg, #1c2128, #161b22);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .stat-val { font-size: 1.5rem; font-weight: 700; display: block; }
+        .stat-label { font-size: 0.8rem; color: var(--text-dim); }
+
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+        <span></span> Football Analytics
+    </div>
+</nav>
+
+<div class="container">
+    <header>
+        <h1>Dashboard</h1>
+        <p style="color: var(--text-dim);">Welcome back. Here's a summary of your scouted data.</p>
+    </header>
+
+    <div class="stats-row">
+        <div class="stat-box">
+            <span class="stat-label">Total Teams</span>
+            <span class="stat-val">0</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Active Players</span>
+            <span class="stat-val">0</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Analytic Reports</span>
+            <span class="stat-val">12</span>
+        </div>
+    </div>
+
+    <div class="grid">
+        <section class="section-card">
+            <div class="section-header">
+                <h2>My Teams</h2>
+                <button class="btn-add">+ Add Team</button>
+            </div>
+            <div class="empty-state">
+                <p>No teams tracked yet.</p>
+            </div>
+        </section>
+
+        <section class="section-card">
+            <div class="section-header">
+                <h2>Top Players</h2>
+                <button class="btn-add">+ Add Player</button>
+            </div>
+            <div class="empty-state">
+                <p>No players added yet.</p>
+            </div>
+        </section>
+    </div>
+</div>
+
+</body>
+</html>
