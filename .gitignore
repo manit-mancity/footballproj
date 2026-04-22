@@ -1,0 +1,32 @@
+backend/__pycache__
+backend/migrations/__pycache__
+backend/migrations
+backend/management/__pycache__
+config/__pycache__
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Distribution / build
+dist/
+build/
+*.egg-info/

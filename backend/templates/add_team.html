@@ -1,0 +1,25 @@
+function filterTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const country = countryFilter.value.toLowerCase();
+    let visible = 0;
+
+    document.querySelectorAll('.team-row').forEach(row => {
+        const name = row.dataset.name.toLowerCase();
+        const rc   = row.dataset.country.toLowerCase();
+
+        const ok = (name.includes(search) || rc.includes(search)) && (!country || rc === country);
+        row.style.display = ok ? '' : 'none';
+
+        if (!ok) {
+            // unselect hidden rows
+            row.classList.remove('selected');
+            const cb = row.querySelector('input[type="checkbox"]');
+            if (cb) cb.checked = false;
+        }
+
+        if (ok) visible++;
+    });
+
+    updateCount();
+    document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+}

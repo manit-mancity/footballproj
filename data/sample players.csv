@@ -1,0 +1,70 @@
+name,team,goals,assists,matches_played,tackles,interceptions,key_passes,dribbles,yellow_cards,red_cards
+Erling Haaland,Manchester City,27,5,26,8,4,22,31,3,0
+Kevin De Bruyne,Manchester City,8,18,28,24,18,98,44,5,0
+Phil Foden,Manchester City,14,12,31,19,12,76,88,4,0
+Mohamed Salah,Liverpool,24,13,33,21,10,81,95,2,0
+Darwin Nunez,Liverpool,13,6,29,12,6,31,52,6,1
+Luis Diaz,Liverpool,13,8,31,18,9,55,80,3,0
+Bukayo Saka,Arsenal,16,11,35,28,14,88,102,4,0
+Leandro Trossard,Arsenal,9,7,30,22,11,60,55,3,0
+Martin Odegaard,Arsenal,8,10,28,35,22,90,48,5,0
+Cole Palmer,Chelsea,22,11,34,18,9,77,92,4,0
+Nicolas Jackson,Chelsea,14,4,30,10,5,28,44,7,1
+Pedro Neto,Chelsea,7,9,29,20,10,58,78,3,0
+Ollie Watkins,Aston Villa,19,13,35,14,7,42,60,4,0
+Morgan Rogers,Aston Villa,12,8,32,26,14,65,72,5,0
+Leon Bailey,Aston Villa,10,9,30,16,8,50,85,3,0
+Kylian Mbappé,Real Madrid,31,9,34,15,8,55,120,5,0
+Vinicius Jr,Real Madrid,24,11,33,12,6,48,138,8,1
+Jude Bellingham,Real Madrid,19,10,32,45,28,82,66,7,0
+Robert Lewandowski,Barcelona,19,10,30,9,4,35,28,3,0
+Raphinha,Barcelona,22,13,33,18,10,70,105,6,0
+Lamine Yamal,Barcelona,7,15,34,16,8,88,115,2,0
+Antoine Griezmann,Atlético Madrid,14,10,35,30,18,72,58,5,0
+Julian Alvarez,Atlético Madrid,17,8,33,28,15,55,64,4,0
+Samuel Lino,Atlético Madrid,9,7,28,19,9,44,72,3,0
+Harry Kane,Bayern Munich,36,8,34,10,5,40,30,2,0
+Jamal Musiala,Bayern Munich,15,14,30,22,14,75,95,3,0
+Leroy Sane,Bayern Munich,11,12,29,18,9,60,88,4,0
+Serhou Guirassy,Borussia Dortmund,28,5,28,8,4,25,35,5,0
+Donyell Malen,Borussia Dortmund,12,7,31,15,8,48,70,3,0
+Julian Brandt,Borussia Dortmund,8,14,33,38,22,85,50,4,0
+Loïs Openda,RB Leipzig,23,6,31,11,5,30,50,4,0
+Benjamin Sesko,RB Leipzig,18,4,29,8,3,22,38,3,0
+Xavi Simons,RB Leipzig,11,13,30,32,18,80,75,5,0
+Florian Wirtz,Bayer Leverkusen,18,20,33,28,16,95,90,3,0
+Granit Xhaka,Bayer Leverkusen,6,12,32,58,42,80,30,8,1
+Victor Boniface,Bayer Leverkusen,14,7,27,10,5,35,55,5,0
+Bradley Barcola,Paris Saint-Germain,18,10,34,16,8,55,95,4,0
+Ousmane Dembélé,Paris Saint-Germain,21,13,33,14,7,68,110,5,0
+Gonçalo Ramos,Paris Saint-Germain,16,7,30,9,4,30,40,3,0
+Désiré Doué,Brest,14,9,33,22,11,60,80,4,0
+Steve Mounié,Brest,12,4,29,10,5,22,30,5,0
+Aleksandr Golovin,Monaco,9,11,30,30,18,72,55,4,0
+Folarin Balogun,Monaco,11,6,28,9,4,28,38,3,0
+Jonathan David,Lille,25,7,32,10,5,32,42,3,0
+Edon Zhegrova,Lille,13,10,31,18,9,58,80,4,0
+Marcus Thuram,Inter Milan,15,7,31,18,9,38,60,4,0
+Lautaro Martinez,Inter Milan,22,8,33,12,6,35,48,5,0
+Federico Dimarco,Inter Milan,5,12,32,42,28,70,35,6,0
+Rafael Leão,AC Milan,11,9,30,14,7,52,90,5,0
+Alvaro Morata,AC Milan,13,5,28,14,8,30,32,6,0
+Christian Pulisic,AC Milan,10,8,31,22,11,58,62,4,0
+Dusan Vlahovic,Juventus,17,3,28,8,4,22,25,5,0
+Teun Koopmeiners,Juventus,9,10,30,42,26,75,45,6,0
+Francisco Conceição,Juventus,8,7,26,20,10,48,68,3,0
+Ademola Lookman,Atalanta,16,9,32,19,10,55,78,4,0
+Mateo Retegui,Atalanta,24,6,33,10,5,28,32,3,0
+Mario Pasalic,Atalanta,8,10,30,38,22,70,40,5,0
+Santiago Castro,Bologna,14,5,30,12,6,32,45,4,0
+Riccardo Orsolini,Bologna,11,8,31,18,9,55,70,3,0
+Viktor Gyokeres,Sporting CP,43,15,36,14,7,45,62,5,0
+Pedro Goncalves,Sporting CP,18,12,33,28,15,78,72,4,0
+Vangelis Pavlidis,Benfica,24,8,31,10,5,30,35,3,0
+Di Maria,Benfica,7,13,28,16,9,68,60,4,0
+Mehdi Taremi,Porto,19,9,30,12,6,35,40,4,0
+Wenderson Galeno,Porto,14,11,32,15,8,55,80,3,0
+Luuk de Jong,PSV Eindhoven,22,6,30,9,4,25,28,3,0
+Noa Lang,PSV Eindhoven,13,14,31,18,9,70,88,5,0
+Santiago Gimenez,Feyenoord,23,7,29,10,5,28,38,4,0
+Ayase Ueda,Feyenoord,16,5,30,8,4,22,30,3,0

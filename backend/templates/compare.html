@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare – Pinnacle Football Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0e14; --card: #161b22; --accent: #38bdf8;
+            --accent-dim: rgba(56,189,248,.1); --text: #f0f6fc;
+            --dim: #8b949e; --border: #30363d; --hover: #1c2128;
+            --green: #4ade80; --yellow: #facc15; --red: #f87171;
+            --col-a: #38bdf8; --col-b: #f472b6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        nav { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: rgba(22,27,34,.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links a { color: var(--dim); text-decoration: none; font-size: .9rem; transition: color .2s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--text); font-weight: 600; }
+
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem; }
+        h1 { font-size: 1.8rem; margin-bottom: .3rem; }
+        .subtitle { color: var(--dim); font-size: .9rem; margin-bottom: 2rem; }
+
+        .mode-tabs { display: flex; gap: .75rem; margin-bottom: 2rem; }
+        .mode-btn { background: var(--card); border: 1px solid var(--border); color: var(--dim); padding: .6rem 1.4rem; border-radius: 8px; font-size: .9rem; cursor: pointer; font-family: inherit; transition: all .2s; }
+        .mode-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+
+        .selector-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+        .selector-row { display: grid; grid-template-columns: 1fr 60px 1fr; align-items: end; gap: 1rem; margin-bottom: 1.2rem; }
+        .vs-badge { text-align: center; font-size: 1rem; font-weight: 700; color: var(--dim); padding-bottom: .5rem; }
+        .field-group label { display: block; font-size: .75rem; text-transform: uppercase; letter-spacing: .8px; color: var(--dim); margin-bottom: .5rem; }
+        .field-group select { width: 100%; background: #1c2128; border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: .7rem 1rem; font-size: .9rem; font-family: inherit; outline: none; cursor: pointer; transition: border-color .2s; }
+        .field-group select:focus { border-color: var(--accent); }
+        .btn-compare { background: var(--accent); color: #000; border: none; padding: .75rem 2rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: .95rem; font-family: inherit; transition: opacity .2s; }
+        .btn-compare:hover { opacity: .85; }
+
+        .results { display: none; }
+        .results.show { display: block; }
+
+        .compare-header { display: grid; grid-template-columns: 1fr 60px 1fr; align-items: center; margin-bottom: 1.5rem; padding: 1.2rem 0; }
+        .side-a { text-align: right; }
+        .side-b { text-align: left; }
+        .side-label { font-size: .7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: .3rem; display: block; }
+        .side-a .side-label { color: var(--col-a); }
+        .side-b .side-label { color: var(--col-b); }
+        .side-name { font-size: 1.3rem; font-weight: 700; }
+        .side-sub { color: var(--dim); font-size: .82rem; margin-top: .2rem; }
+        .vs-circle { width: 44px; height: 44px; background: var(--hover); border: 2px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--dim); font-size: .85rem; margin: 0 auto; }
+
+        .stat-block { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 1.2rem; }
+        .stat-block-title { padding: .75rem 1.2rem; background: var(--hover); border-bottom: 1px solid var(--border); font-size: .72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--dim); font-weight: 600; }
+
+        .stat-row { display: grid; grid-template-columns: 1fr 160px 1fr; align-items: center; padding: .9rem 1.2rem; border-bottom: 1px solid var(--border); }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-val-a { text-align: right; font-size: 1.05rem; font-weight: 700; }
+        .stat-val-b { text-align: left;  font-size: 1.05rem; font-weight: 700; }
+        .stat-val-a.win { color: var(--col-a); }
+        .stat-val-b.win { color: var(--col-b); }
+        .stat-label { text-align: center; font-size: .75rem; color: var(--dim); text-transform: uppercase; letter-spacing: .5px; }
+
+        .bar-row { display: grid; grid-template-columns: 1fr 160px 1fr; align-items: center; padding: .75rem 1.2rem; border-bottom: 1px solid var(--border); gap: .5rem; }
+        .bar-row:last-child { border-bottom: none; }
+        .bar-side-a { display: flex; align-items: center; justify-content: flex-end; gap: .6rem; }
+        .bar-side-b { display: flex; align-items: center; gap: .6rem; }
+        .bar { height: 10px; border-radius: 5px; min-width: 4px; }
+        .bar-a { background: var(--col-a); }
+        .bar-b { background: var(--col-b); }
+        .bar-num { font-size: .85rem; font-weight: 700; white-space: nowrap; }
+        .bar-num.a { color: var(--col-a); }
+        .bar-num.b { color: var(--col-b); }
+
+        .rating-pill { display: inline-block; padding: .25rem .7rem; border-radius: 20px; font-size: .85rem; font-weight: 700; }
+        .rating-pill.excellent { background: rgba(74,222,128,.15); color: var(--green); }
+        .rating-pill.good      { background: rgba(56,189,248,.15); color: var(--accent); }
+        .rating-pill.average   { background: rgba(250,204,21,.15); color: var(--yellow); }
+        .rating-pill.poor      { background: rgba(248,113,113,.15); color: var(--red); }
+
+        .no-data { text-align: center; padding: 3.5rem 1rem; color: var(--dim); background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+        .no-data h3 { font-size: 1rem; margin-bottom: .4rem; color: var(--text); }
+
+        .poss-bar-wrap { display: grid; grid-template-columns: 1fr 160px 1fr; align-items: center; padding: .9rem 1.2rem; border-bottom: 1px solid var(--border); gap: .5rem; }
+        .poss-bar-wrap:last-child { border-bottom: none; }
+        .poss-track { flex: 1; height: 10px; background: var(--hover); border-radius: 5px; overflow: hidden; position: relative; }
+        .poss-fill-a { height: 100%; background: var(--col-a); border-radius: 5px 0 0 5px; float: left; }
+        .poss-fill-b { height: 100%; background: var(--col-b); border-radius: 0 5px 5px 0; float: right; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo"><span>⚽</span> Pinnacle</div>
+    <div class="nav-links">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'compare' %}" class="active">Compare</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Compare</h1>
+    <p class="subtitle">Head-to-head stats for teams and players.</p>
+
+    <div class="mode-tabs">
+        <button class="mode-btn active" id="tab-teams" onclick="setMode('teams')">🏟️ Teams</button>
+        <button class="mode-btn" id="tab-players" onclick="setMode('players')">👤 Players</button>
+    </div>
+
+    <!-- TEAMS SECTION -->
+    <div id="section-teams">
+        <div class="selector-card">
+            <div class="selector-row">
+                <div class="field-group">
+                    <label>Team A</label>
+                    <select id="team-a-select">
+                        <option value="">— Select team —</option>
+                        {% for t in all_teams %}
+                        <option value="{{ t.id }}"
+                            data-name="{{ t.name }}"
+                            data-country="{{ t.country }}"
+                            data-league="{{ t.league }}"
+                            data-mp="{{ t.matches_played }}"
+                            data-wins="{{ t.wins }}"
+                            data-draws="{{ t.draws }}"
+                            data-losses="{{ t.losses }}"
+                            data-gs="{{ t.goals_scored }}"
+                            data-gc="{{ t.goals_conceded }}"
+                            data-cs="{{ t.clean_sheets }}"
+                            data-yc="{{ t.yellow_cards }}"
+                            data-rc="{{ t.red_cards }}"
+                            data-sot="{{ t.shots_on_target }}"
+                            data-poss="{{ t.possession }}"
+                            data-players="{{ t.player_count }}"
+                            data-sqgoals="{{ t.squad_goals }}"
+                            data-sqassists="{{ t.squad_assists }}">{{ t.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="vs-badge">VS</div>
+                <div class="field-group">
+                    <label>Team B</label>
+                    <select id="team-b-select">
+                        <option value="">— Select team —</option>
+                        {% for t in all_teams %}
+                        <option value="{{ t.id }}"
+                            data-name="{{ t.name }}"
+                            data-country="{{ t.country }}"
+                            data-league="{{ t.league }}"
+                            data-mp="{{ t.matches_played }}"
+                            data-wins="{{ t.wins }}"
+                            data-draws="{{ t.draws }}"
+                            data-losses="{{ t.losses }}"
+                            data-gs="{{ t.goals_scored }}"
+                            data-gc="{{ t.goals_conceded }}"
+                            data-cs="{{ t.clean_sheets }}"
+                            data-yc="{{ t.yellow_cards }}"
+                            data-rc="{{ t.red_cards }}"
+                            data-sot="{{ t.shots_on_target }}"
+                            data-poss="{{ t.possession }}"
+                            data-players="{{ t.player_count }}"
+                            data-sqgoals="{{ t.squad_goals }}"
+                            data-sqassists="{{ t.squad_assists }}">{{ t.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <button class="btn-compare" onclick="compareTeams()">Compare Teams</button>
+        </div>
+
+        <div class="results" id="team-results">
+            <div class="compare-header">
+                <div class="side-a">
+                    <span class="side-label">Team A</span>
+                    <div class="side-name" id="t-name-a"></div>
+                    <div class="side-sub" id="t-sub-a"></div>
+                </div>
+                <div><div class="vs-circle">VS</div></div>
+                <div class="side-b">
+                    <span class="side-label">Team B</span>
+                    <div class="side-name" id="t-name-b"></div>
+                    <div class="side-sub" id="t-sub-b"></div>
+                </div>
+            </div>
+
+            <!-- Match Record -->
+            <div class="stat-block">
+                <div class="stat-block-title">Match Record</div>
+                <div class="stat-row"><div class="stat-val-a" id="t-mp-a"></div><div class="stat-label">Matches Played</div><div class="stat-val-b" id="t-mp-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="t-w-a"></div><div class="stat-label">Wins</div><div class="stat-val-b" id="t-w-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="t-d-a"></div><div class="stat-label">Draws</div><div class="stat-val-b" id="t-d-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="t-l-a"></div><div class="stat-label">Losses</div><div class="stat-val-b" id="t-l-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="t-wr-a"></div><div class="stat-label">Win Rate</div><div class="stat-val-b" id="t-wr-b"></div></div>
+            </div>
+
+            <!-- Goals -->
+            <div class="stat-block">
+                <div class="stat-block-title">Goals</div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="t-gs-a-num"></span><div class="bar bar-a" id="t-gs-a-bar"></div></div>
+                    <div class="stat-label">Goals Scored</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="t-gs-b-bar"></div><span class="bar-num b" id="t-gs-b-num"></span></div>
+                </div>
+                <div class="stat-row"><div class="stat-val-a" id="t-gc-a"></div><div class="stat-label">Goals Conceded</div><div class="stat-val-b" id="t-gc-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="t-gd-a"></div><div class="stat-label">Goal Difference</div><div class="stat-val-b" id="t-gd-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="t-gpg-a"></div><div class="stat-label">Goals / Game</div><div class="stat-val-b" id="t-gpg-b"></div></div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="t-sot-a-num"></span><div class="bar bar-a" id="t-sot-a-bar"></div></div>
+                    <div class="stat-label">Shots on Target</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="t-sot-b-bar"></div><span class="bar-num b" id="t-sot-b-num"></span></div>
+                </div>
+            </div>
+
+            <!-- Defence -->
+            <div class="stat-block">
+                <div class="stat-block-title">Defence</div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="t-cs-a-num"></span><div class="bar bar-a" id="t-cs-a-bar"></div></div>
+                    <div class="stat-label">Clean Sheets</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="t-cs-b-bar"></div><span class="bar-num b" id="t-cs-b-num"></span></div>
+                </div>
+                <div class="stat-row"><div class="stat-val-a" id="t-gcpg-a"></div><div class="stat-label">Goals Conceded / Game</div><div class="stat-val-b" id="t-gcpg-b"></div></div>
+            </div>
+
+            <!-- Possession -->
+            <div class="stat-block">
+                <div class="stat-block-title">Possession & Style</div>
+                <div class="stat-row">
+                    <div class="stat-val-a" id="t-poss-a"></div>
+                    <div class="stat-label">Avg Possession %</div>
+                    <div class="stat-val-b" id="t-poss-b"></div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-side-a" style="flex-direction:row-reverse; justify-content:flex-start;">
+                        <div class="bar bar-a" id="t-poss-a-bar" style="min-width:4px;"></div>
+                        <span class="bar-num a" id="t-poss-a-pct" style="margin-right:.4rem;"></span>
+                    </div>
+                    <div class="stat-label">Possession Split</div>
+                    <div class="bar-side-b">
+                        <div class="bar bar-b" id="t-poss-b-bar" style="min-width:4px;"></div>
+                        <span class="bar-num b" id="t-poss-b-pct"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discipline -->
+            <div class="stat-block">
+                <div class="stat-block-title">Discipline</div>
+                <div class="stat-row"><div class="stat-val-a" id="t-yc-a"></div><div class="stat-label">Yellow Cards</div><div class="stat-val-b" id="t-yc-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="t-rc-a"></div><div class="stat-label">Red Cards</div><div class="stat-val-b" id="t-rc-b"></div></div>
+            </div>
+
+            <!-- Squad -->
+            <div class="stat-block">
+                <div class="stat-block-title">Squad (Tracked Players)</div>
+                <div class="stat-row"><div class="stat-val-a" id="t-pc-a"></div><div class="stat-label">Players</div><div class="stat-val-b" id="t-pc-b"></div></div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="t-sg-a-num"></span><div class="bar bar-a" id="t-sg-a-bar"></div></div>
+                    <div class="stat-label">Squad Goals</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="t-sg-b-bar"></div><span class="bar-num b" id="t-sg-b-num"></span></div>
+                </div>
+                <div class="stat-row"><div class="stat-val-a" id="t-sa-a"></div><div class="stat-label">Squad Assists</div><div class="stat-val-b" id="t-sa-b"></div></div>
+            </div>
+        </div>
+
+        <div class="no-data" id="team-empty">
+            <h3>Select two different teams to compare.</h3>
+            <p>Win rates, goal stats, possession, discipline and more.</p>
+        </div>
+    </div>
+
+    <!-- PLAYERS SECTION -->
+    <div id="section-players" style="display:none">
+        <div class="selector-card">
+            <div class="selector-row">
+                <div class="field-group">
+                    <label>Player A</label>
+                    <select id="player-a-select">
+                        <option value="">— Select player —</option>
+                        {% for p in all_players %}
+                        <option value="{{ p.id }}"
+                            data-name="{{ p.name }}"
+                            data-team="{{ p.team }}"
+                            data-goals="{{ p.goals }}"
+                            data-assists="{{ p.assists }}"
+                            data-matches="{{ p.matches_played }}"
+                            data-tackles="{{ p.tackles }}"
+                            data-interceptions="{{ p.interceptions }}"
+                            data-keypasses="{{ p.key_passes }}"
+                            data-dribbles="{{ p.dribbles }}"
+                            data-yellowcards="{{ p.yellow_cards }}"
+                            data-redcards="{{ p.red_cards }}">{{ p.name }} ({{ p.team }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="vs-badge">VS</div>
+                <div class="field-group">
+                    <label>Player B</label>
+                    <select id="player-b-select">
+                        <option value="">— Select player —</option>
+                        {% for p in all_players %}
+                        <option value="{{ p.id }}"
+                            data-name="{{ p.name }}"
+                            data-team="{{ p.team }}"
+                            data-goals="{{ p.goals }}"
+                            data-assists="{{ p.assists }}"
+                            data-matches="{{ p.matches_played }}"
+                            data-tackles="{{ p.tackles }}"
+                            data-interceptions="{{ p.interceptions }}"
+                            data-keypasses="{{ p.key_passes }}"
+                            data-dribbles="{{ p.dribbles }}"
+                            data-yellowcards="{{ p.yellow_cards }}"
+                            data-redcards="{{ p.red_cards }}">{{ p.name }} ({{ p.team }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <button class="btn-compare" onclick="comparePlayers()">Compare Players</button>
+        </div>
+
+        <div class="results" id="player-results">
+            <div class="compare-header">
+                <div class="side-a">
+                    <span class="side-label">Player A</span>
+                    <div class="side-name" id="p-name-a"></div>
+                    <div class="side-sub" id="p-sub-a"></div>
+                </div>
+                <div><div class="vs-circle">VS</div></div>
+                <div class="side-b">
+                    <span class="side-label">Player B</span>
+                    <div class="side-name" id="p-name-b"></div>
+                    <div class="side-sub" id="p-sub-b"></div>
+                </div>
+            </div>
+
+            <!-- Overall Rating -->
+            <div class="stat-block">
+                <div class="stat-block-title">Overall Rating</div>
+                <div class="stat-row" style="padding:1.4rem 1.2rem;">
+                    <div class="stat-val-a" id="p-rating-a"></div>
+                    <div class="stat-label">Score / 10</div>
+                    <div class="stat-val-b" id="p-rating-b"></div>
+                </div>
+            </div>
+
+            <!-- Raw Attacking Stats -->
+            <div class="stat-block">
+                <div class="stat-block-title">Attacking</div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="p-g-a-num"></span><div class="bar bar-a" id="p-g-a-bar"></div></div>
+                    <div class="stat-label">Goals</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="p-g-b-bar"></div><span class="bar-num b" id="p-g-b-num"></span></div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="p-a-a-num"></span><div class="bar bar-a" id="p-a-a-bar"></div></div>
+                    <div class="stat-label">Assists</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="p-a-b-bar"></div><span class="bar-num b" id="p-a-b-num"></span></div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="p-gc-a-num"></span><div class="bar bar-a" id="p-gc-a-bar"></div></div>
+                    <div class="stat-label">Goal Contributions</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="p-gc-b-bar"></div><span class="bar-num b" id="p-gc-b-num"></span></div>
+                </div>
+                <div class="stat-row"><div class="stat-val-a" id="p-m-a"></div><div class="stat-label">Matches Played</div><div class="stat-val-b" id="p-m-b"></div></div>
+            </div>
+
+            <!-- Per Game Averages -->
+            <div class="stat-block">
+                <div class="stat-block-title">Per Game Averages</div>
+                <div class="stat-row"><div class="stat-val-a" id="p-gpg-a"></div><div class="stat-label">Goals / Game</div><div class="stat-val-b" id="p-gpg-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="p-apg-a"></div><div class="stat-label">Assists / Game</div><div class="stat-val-b" id="p-apg-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="p-capg-a"></div><div class="stat-label">G+A / Game</div><div class="stat-val-b" id="p-capg-b"></div></div>
+            </div>
+
+            <!-- Defensive -->
+            <div class="stat-block">
+                <div class="stat-block-title">Defensive</div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="p-tk-a-num"></span><div class="bar bar-a" id="p-tk-a-bar"></div></div>
+                    <div class="stat-label">Tackles</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="p-tk-b-bar"></div><span class="bar-num b" id="p-tk-b-num"></span></div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="p-int-a-num"></span><div class="bar bar-a" id="p-int-a-bar"></div></div>
+                    <div class="stat-label">Interceptions</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="p-int-b-bar"></div><span class="bar-num b" id="p-int-b-num"></span></div>
+                </div>
+                <div class="stat-row"><div class="stat-val-a" id="p-tpg-a"></div><div class="stat-label">Tackles / Game</div><div class="stat-val-b" id="p-tpg-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="p-ipg-a"></div><div class="stat-label">Interceptions / Game</div><div class="stat-val-b" id="p-ipg-b"></div></div>
+            </div>
+
+            <!-- Creative -->
+            <div class="stat-block">
+                <div class="stat-block-title">Creative & Ball Carrying</div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="p-kp-a-num"></span><div class="bar bar-a" id="p-kp-a-bar"></div></div>
+                    <div class="stat-label">Key Passes</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="p-kp-b-bar"></div><span class="bar-num b" id="p-kp-b-num"></span></div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-side-a"><span class="bar-num a" id="p-dr-a-num"></span><div class="bar bar-a" id="p-dr-a-bar"></div></div>
+                    <div class="stat-label">Dribbles</div>
+                    <div class="bar-side-b"><div class="bar bar-b" id="p-dr-b-bar"></div><span class="bar-num b" id="p-dr-b-num"></span></div>
+                </div>
+                <div class="stat-row"><div class="stat-val-a" id="p-kpg-a"></div><div class="stat-label">Key Passes / Game</div><div class="stat-val-b" id="p-kpg-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="p-dpg-a"></div><div class="stat-label">Dribbles / Game</div><div class="stat-val-b" id="p-dpg-b"></div></div>
+            </div>
+
+            <!-- Discipline -->
+            <div class="stat-block">
+                <div class="stat-block-title">Discipline</div>
+                <div class="stat-row"><div class="stat-val-a" id="p-yc-a"></div><div class="stat-label">Yellow Cards</div><div class="stat-val-b" id="p-yc-b"></div></div>
+                <div class="stat-row"><div class="stat-val-a" id="p-rc-a"></div><div class="stat-label">Red Cards</div><div class="stat-val-b" id="p-rc-b"></div></div>
+            </div>
+        </div>
+
+        <div class="no-data" id="player-empty">
+            <h3>Select two different players to compare.</h3>
+            <p>Goals, assists, per-game averages, defensive stats, and overall rating.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+function setMode(mode) {
+    document.getElementById('section-teams').style.display   = mode === 'teams'   ? 'block' : 'none';
+    document.getElementById('section-players').style.display = mode === 'players' ? 'block' : 'none';
+    document.getElementById('tab-teams').classList.toggle('active',   mode === 'teams');
+    document.getElementById('tab-players').classList.toggle('active', mode === 'players');
+}
+
+function set(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+
+function setHTML(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+
+function highlight(idA, idB, valA, valB, lowerIsBetter) {
+    const elA = document.getElementById(idA);
+    const elB = document.getElementById(idB);
+    if (!elA || !elB) return;
+    elA.classList.remove('win'); elB.classList.remove('win');
+    if (valA === valB) return;
+    const aWins = lowerIsBetter ? valA < valB : valA > valB;
+    (aWins ? elA : elB).classList.add('win');
+}
+
+function setBar(barIdA, barIdB, numIdA, numIdB, valA, valB) {
+    const total = (valA + valB) || 1;
+    const maxW  = 100;
+    document.getElementById(barIdA).style.width = Math.max(4, Math.round(valA / total * maxW)) + 'px';
+    document.getElementById(barIdB).style.width = Math.max(4, Math.round(valB / total * maxW)) + 'px';
+    set(numIdA, valA);
+    set(numIdB, valB);
+}
+
+function computeRating(goals, assists, matches) {
+    const m   = matches > 0 ? matches : 1;
+    const gpg = goals / m;
+    const apg = assists / m;
+    const gc  = goals + assists;
+    const raw = (gpg * 4) + (apg * 3) + ((gc / m) * 3);
+    const r   = Math.min(Math.round(raw * 10) / 10, 10.0);
+    const cls = r >= 7 ? 'excellent' : r >= 5 ? 'good' : r >= 3 ? 'average' : 'poor';
+    return { r, cls };
+}
+
+function compareTeams() {
+    const selA = document.getElementById('team-a-select');
+    const selB = document.getElementById('team-b-select');
+
+    if (!selA.value || !selB.value || selA.value === selB.value) {
+        document.getElementById('team-results').classList.remove('show');
+        document.getElementById('team-empty').style.display = 'block';
+        return;
+    }
+
+    const oA = selA.options[selA.selectedIndex];
+    const oB = selB.options[selB.selectedIndex];
+
+    const mp  = { a: +oA.dataset.mp,        b: +oB.dataset.mp        };
+    const w   = { a: +oA.dataset.wins,      b: +oB.dataset.wins      };
+    const dr  = { a: +oA.dataset.draws,     b: +oB.dataset.draws     };
+    const l   = { a: +oA.dataset.losses,    b: +oB.dataset.losses    };
+    const gs  = { a: +oA.dataset.gs,        b: +oB.dataset.gs        };
+    const gc  = { a: +oA.dataset.gc,        b: +oB.dataset.gc        };
+    const cs  = { a: +oA.dataset.cs,        b: +oB.dataset.cs        };
+    const yc  = { a: +oA.dataset.yc,        b: +oB.dataset.yc        };
+    const rc  = { a: +oA.dataset.rc,        b: +oB.dataset.rc        };
+    const sot = { a: +oA.dataset.sot,       b: +oB.dataset.sot       };
+    const pos = { a: +oA.dataset.poss,      b: +oB.dataset.poss      };
+    const pc  = { a: +oA.dataset.players,   b: +oB.dataset.players   };
+    const sg  = { a: +oA.dataset.sqgoals,   b: +oB.dataset.sqgoals   };
+    const sa  = { a: +oA.dataset.sqassists, b: +oB.dataset.sqassists };
+
+    const wr   = { a: mp.a ? +(w.a/mp.a*100).toFixed(1) : 0, b: mp.b ? +(w.b/mp.b*100).toFixed(1) : 0 };
+    const gpg  = { a: mp.a ? +(gs.a/mp.a).toFixed(2) : 0,    b: mp.b ? +(gs.b/mp.b).toFixed(2) : 0    };
+    const gcpg = { a: mp.a ? +(gc.a/mp.a).toFixed(2) : 0,    b: mp.b ? +(gc.b/mp.b).toFixed(2) : 0    };
+    const gd   = { a: gs.a - gc.a, b: gs.b - gc.b };
+
+    set('t-name-a', oA.dataset.name); set('t-sub-a', oA.dataset.country + ' · ' + oA.dataset.league);
+    set('t-name-b', oB.dataset.name); set('t-sub-b', oB.dataset.country + ' · ' + oB.dataset.league);
+
+    set('t-mp-a', mp.a);  set('t-mp-b', mp.b);  highlight('t-mp-a','t-mp-b', mp.a, mp.b);
+    set('t-w-a',  w.a);   set('t-w-b',  w.b);   highlight('t-w-a','t-w-b',   w.a,  w.b);
+    set('t-d-a',  dr.a);  set('t-d-b',  dr.b);
+    set('t-l-a',  l.a);   set('t-l-b',  l.b);   highlight('t-l-a','t-l-b',   l.a,  l.b, true);
+    set('t-wr-a', wr.a+'%'); set('t-wr-b', wr.b+'%'); highlight('t-wr-a','t-wr-b', wr.a, wr.b);
+
+    setBar('t-gs-a-bar','t-gs-b-bar','t-gs-a-num','t-gs-b-num', gs.a, gs.b);
+    set('t-gc-a', gc.a);  set('t-gc-b', gc.b);  highlight('t-gc-a','t-gc-b', gc.a, gc.b, true);
+    set('t-gd-a', (gd.a > 0 ? '+' : '') + gd.a); set('t-gd-b', (gd.b > 0 ? '+' : '') + gd.b);
+    highlight('t-gd-a','t-gd-b', gd.a, gd.b);
+    set('t-gpg-a', gpg.a); set('t-gpg-b', gpg.b); highlight('t-gpg-a','t-gpg-b', gpg.a, gpg.b);
+    setBar('t-sot-a-bar','t-sot-b-bar','t-sot-a-num','t-sot-b-num', sot.a, sot.b);
+
+    setBar('t-cs-a-bar','t-cs-b-bar','t-cs-a-num','t-cs-b-num', cs.a, cs.b);
+    set('t-gcpg-a', gcpg.a); set('t-gcpg-b', gcpg.b); highlight('t-gcpg-a','t-gcpg-b', gcpg.a, gcpg.b, true);
+
+    set('t-poss-a', pos.a + '%'); set('t-poss-b', pos.b + '%'); highlight('t-poss-a','t-poss-b', pos.a, pos.b);
+    const total = pos.a + pos.b || 1;
+    document.getElementById('t-poss-a-bar').style.width = Math.max(4, Math.round(pos.a / total * 120)) + 'px';
+    document.getElementById('t-poss-b-bar').style.width = Math.max(4, Math.round(pos.b / total * 120)) + 'px';
+    set('t-poss-a-pct', pos.a + '%'); set('t-poss-b-pct', pos.b + '%');
+
+    set('t-yc-a', yc.a); set('t-yc-b', yc.b); highlight('t-yc-a','t-yc-b', yc.a, yc.b, true);
+    set('t-rc-a', rc.a); set('t-rc-b', rc.b); highlight('t-rc-a','t-rc-b', rc.a, rc.b, true);
+
+    set('t-pc-a', pc.a);  set('t-pc-b', pc.b);  highlight('t-pc-a','t-pc-b', pc.a, pc.b);
+    setBar('t-sg-a-bar','t-sg-b-bar','t-sg-a-num','t-sg-b-num', sg.a, sg.b);
+    set('t-sa-a', sa.a);  set('t-sa-b', sa.b);  highlight('t-sa-a','t-sa-b', sa.a, sa.b);
+
+    document.getElementById('team-empty').style.display = 'none';
+    document.getElementById('team-results').classList.add('show');
+}
+
+function comparePlayers() {
+    const selA = document.getElementById('player-a-select');
+    const selB = document.getElementById('player-b-select');
+
+    if (!selA.value || !selB.value || selA.value === selB.value) {
+        document.getElementById('player-results').classList.remove('show');
+        document.getElementById('player-empty').style.display = 'block';
+        return;
+    }
+
+    const oA = selA.options[selA.selectedIndex];
+    const oB = selB.options[selB.selectedIndex];
+
+    const g   = { a: +oA.dataset.goals,          b: +oB.dataset.goals          };
+    const a   = { a: +oA.dataset.assists,         b: +oB.dataset.assists        };
+    const m   = { a: +oA.dataset.matches,         b: +oB.dataset.matches        };
+    const tk  = { a: +oA.dataset.tackles,         b: +oB.dataset.tackles        };
+    const int = { a: +oA.dataset.interceptions,   b: +oB.dataset.interceptions  };
+    const kp  = { a: +oA.dataset.keypasses,       b: +oB.dataset.keypasses      };
+    const dr  = { a: +oA.dataset.dribbles,        b: +oB.dataset.dribbles       };
+    const yc  = { a: +oA.dataset.yellowcards,     b: +oB.dataset.yellowcards    };
+    const rc  = { a: +oA.dataset.redcards,        b: +oB.dataset.redcards       };
+    const gc  = { a: g.a + a.a,                   b: g.b + a.b                  };
+
+    const mA = m.a || 1, mB = m.b || 1;
+    const gpg = { a: +(g.a/mA).toFixed(2),   b: +(g.b/mB).toFixed(2)  };
+    const apg = { a: +(a.a/mA).toFixed(2),   b: +(a.b/mB).toFixed(2)  };
+    const cap = { a: +(gc.a/mA).toFixed(2),  b: +(gc.b/mB).toFixed(2) };
+    const tpg = { a: +(tk.a/mA).toFixed(2),  b: +(tk.b/mB).toFixed(2) };
+    const ipg = { a: +(int.a/mA).toFixed(2), b: +(int.b/mB).toFixed(2)};
+    const kpg = { a: +(kp.a/mA).toFixed(2),  b: +(kp.b/mB).toFixed(2) };
+    const dpg = { a: +(dr.a/mA).toFixed(2),  b: +(dr.b/mB).toFixed(2) };
+
+    const rA = computeRating(g.a, a.a, m.a);
+    const rB = computeRating(g.b, a.b, m.b);
+
+    set('p-name-a', oA.dataset.name); set('p-sub-a', oA.dataset.team);
+    set('p-name-b', oB.dataset.name); set('p-sub-b', oB.dataset.team);
+
+    setHTML('p-rating-a', `<span class="rating-pill ${rA.cls}">${rA.r}</span>`);
+    setHTML('p-rating-b', `<span class="rating-pill ${rB.cls}">${rB.r}</span>`);
+
+    setBar('p-g-a-bar','p-g-b-bar','p-g-a-num','p-g-b-num',     g.a,  g.b);
+    setBar('p-a-a-bar','p-a-b-bar','p-a-a-num','p-a-b-num',     a.a,  a.b);
+    setBar('p-gc-a-bar','p-gc-b-bar','p-gc-a-num','p-gc-b-num', gc.a, gc.b);
+    set('p-m-a', m.a); set('p-m-b', m.b);
+
+    set('p-gpg-a', gpg.a); set('p-gpg-b', gpg.b); highlight('p-gpg-a','p-gpg-b', gpg.a, gpg.b);
+    set('p-apg-a', apg.a); set('p-apg-b', apg.b); highlight('p-apg-a','p-apg-b', apg.a, apg.b);
+    set('p-capg-a', cap.a); set('p-capg-b', cap.b); highlight('p-capg-a','p-capg-b', cap.a, cap.b);
+
+    setBar('p-tk-a-bar','p-tk-b-bar','p-tk-a-num','p-tk-b-num',   tk.a,  tk.b);
+    setBar('p-int-a-bar','p-int-b-bar','p-int-a-num','p-int-b-num', int.a, int.b);
+    set('p-tpg-a', tpg.a); set('p-tpg-b', tpg.b); highlight('p-tpg-a','p-tpg-b', tpg.a, tpg.b);
+    set('p-ipg-a', ipg.a); set('p-ipg-b', ipg.b); highlight('p-ipg-a','p-ipg-b', ipg.a, ipg.b);
+
+    setBar('p-kp-a-bar','p-kp-b-bar','p-kp-a-num','p-kp-b-num', kp.a, kp.b);
+    setBar('p-dr-a-bar','p-dr-b-bar','p-dr-a-num','p-dr-b-num', dr.a, dr.b);
+    set('p-kpg-a', kpg.a); set('p-kpg-b', kpg.b); highlight('p-kpg-a','p-kpg-b', kpg.a, kpg.b);
+    set('p-dpg-a', dpg.a); set('p-dpg-b', dpg.b); highlight('p-dpg-a','p-dpg-b', dpg.a, dpg.b);
+
+    set('p-yc-a', yc.a); set('p-yc-b', yc.b); highlight('p-yc-a','p-yc-b', yc.a, yc.b, true);
+    set('p-rc-a', rc.a); set('p-rc-b', rc.b); highlight('p-rc-a','p-rc-b', rc.a, rc.b, true);
+
+    document.getElementById('player-empty').style.display = 'none';
+    document.getElementById('player-results').classList.add('show');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ player.name }} – Pinnacle Football Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-bg: #161b22;
+            --accent-color: #38bdf8;
+            --accent-dim: rgba(56, 189, 248, 0.1);
+            --text-main: #f0f6fc;
+            --text-dim: #8b949e;
+            --border: #30363d;
+            --green: #4ade80;
+            --yellow: #facc15;
+            --red: #f87171;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .player-hero {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .player-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #1c2128;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rating-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid;
+        }
+
+        .rating-circle.excellent { border-color: var(--green); }
+        .rating-circle.good { border-color: var(--accent-color); }
+        .rating-circle.average { border-color: var(--yellow); }
+        .rating-circle.poor { border-color: var(--red); }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .summary-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-bar {
+            height: 6px;
+            background: #1c2128;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 6px 0;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: var(--accent-color);
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .btn-back {
+            background: var(--accent-color);
+            color: #000;
+        }
+
+        .btn-delete {
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HERO -->
+    <div class="player-hero">
+        <div class="player-avatar">👤</div>
+
+        <div>
+            <h2>{{ player.name }}</h2>
+
+            <!-- ✅ SAFE TEAM ACCESS -->
+            <p>
+                {% if player.team %}
+                    {{ player.team.name }}
+                {% else %}
+                    No Team
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="rating-circle {{ rating_class }}">
+            {{ rating }}
+        </div>
+    </div>
+
+    <!-- CORE STATS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>{{ player.goals|default:0 }}</h3>
+            <p>Goals</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ player.assists|default:0 }}</h3>
+            <p>Assists</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ player.matches_played|default:0 }}</h3>
+            <p>Matches</p>
+        </div>
+    </div>
+
+    <!-- PERFORMANCE -->
+    <div class="summary-card">
+        <h4>Performance</h4>
+
+        <!-- ✅ SAFE % fallback -->
+        <div>
+            Goals Contribution
+            <div class="stat-bar">
+                <div class="stat-fill" style="width: {{ goal_contrib_pct|default:0 }}%"></div>
+            </div>
+        </div>
+
+        <div>
+            Goals/Game
+            <div class="stat-bar">
+                <div class="stat-fill" style="width: {{ gpg_pct|default:0 }}%"></div>
+            </div>
+        </div>
+
+        <div>
+            Assists/Game
+            <div class="stat-bar">
+                <div class="stat-fill" style="width: {{ apg_pct|default:0 }}%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADVANCED -->
+    <div class="summary-card">
+        <h4>Advanced</h4>
+
+        <p>GPG: {{ goals_per_game|default:"0.00" }}</p>
+        <p>APG: {{ assists_per_game|default:"0.00" }}</p>
+        <p>Total Contributions: {{ goal_contributions|default:0 }}</p>
+        <p>Per Game: {{ contrib_per_game|default:"0.00" }}</p>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+        <a href="{% url 'dashboard' %}" class="btn btn-back">Back</a>
+    </div>
+
+</div>
+
+</body>
+</html>
